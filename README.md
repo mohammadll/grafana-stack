@@ -1,5 +1,5 @@
 # grafana-stack
-We're going to provide various examples to set up and work with the Grafana stack including Tempo, Mimir, Faro and Grafana Agent
+If you are interested in setting up a Grafana stack and working with it on a kubernetes clsuter, please follow the instructions provided in this repository.
 
 
 ## Table of Contents
