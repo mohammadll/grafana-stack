@@ -16,7 +16,7 @@ The Grafana LGTM stack is a comprehensive set of open-source tools designed for 
      - Using the `agent operator` to collect logs from the cluster nodes, shipping them to a remote `Loki` endpoint and visualizing them with `Grafana`.
 
 
-## Scenario-1: Traces with Tempo
+## :one: Scenario-1: Traces with Tempo
 
 Create a unique Kubernetes namespace for tempo and grafana:
 
