@@ -45,7 +45,7 @@ Create an OpenTelemetry `Collector` and an `Instrumentation` resource with the c
     kubectl apply -f colllector.yml
     kubectl apply -f instrument.yml
 
-Go to `trace-python-app` and build the docker image using this command: `docker build -t myapp .` and then:
+Go to `trace-python-app` directory and build the docker image using this command: `docker build -t myapp .` and then:
 
     kubectl apply -f deployment.yml
     kubectl apply -f service.yml
