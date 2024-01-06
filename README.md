@@ -32,4 +32,26 @@ Use the following command to install Tempo using the configuration options we’
 
     helm -n tempo install tempo grafana/tempo-distributed -f tempo-values.yml
 
-Use the following command to install Grafana using the configuration options we’ve specified in the `grafana-values.yml` file:
+Use the following command to install Grafana using the configuration options we’ve specified in the `grafana-values-scenario-1.yml` file:
+
+    helm -n grafana install grafana grafana/grafana -f grafana-values-scenario-1.yml
+
+To install the Opentelemetry Operator in an existing cluster, make sure you have cert-manager installed and run:
+
+    kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releases/latest/download/opentelemetry-operator.yaml
+
+Create an OpenTelemetry `Collector` and an `Instrumentation` resource with the configuration for the SDK and instrumentation.
+
+    kubectl apply -f colllector.yml
+    kubectl apply -f instrument.yml
+
+Go to `trace-python-app` and build the docker image using this command: `docker build -t myapp .` and then:
+
+    kubectl apply -f deployment.yml
+    kubectl apply -f service.yml
+
+Use `port-forward` to connect to `my-app`, like this: `kubectl port-forward POD_NAME 8080` and then Go to your browser and type:
+
+    http://localhost:8080/rolldice
+
+Refresh the page multiple times. if you want to see the traces, use `port-forward` to connect to `grafana` and Go to `Explore`. You'll see the traces of my-app 
