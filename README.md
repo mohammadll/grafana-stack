@@ -1,5 +1,6 @@
 <img src='grafana-lgtm.png' height="480">
-💡 Description
+
+## 💡 Description
 The Grafana LGTM stack is a comprehensive set of open-source tools designed for monitoring, observability, and visualization. It includes several key components, each serving a specific purpose to provide a complete solution for monitoring applications and infrastructure. If you are interested in setting up a Grafana LGTM stack and working with it on a kubernetes clsuter, please follow the instructions provided in this repository.
 
 ## :wrench: What tools do we want to use in this repository
