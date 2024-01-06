@@ -68,33 +68,23 @@ Install the charts of agent-operator, loki, mimir, grafana
     helm install -n mimir mimir grafana/mimir-distributed
     helm install -n grafana grafana grafana/grafana -f grafana-values-scenario-2.yml
 
-Deploy the GrafanaAgent resource
-
-The root of the custom resource hierarchy is the `GrafanaAgent` resource—the primary resource Agent Operator looks for. `GrafanaAgent` is called the root because it discovers other sub-resources, `MetricsInstance` and `LogsInstance`
+Deploy the GrafanaAgent resource, The root of the custom resource hierarchy is the `GrafanaAgent` resource—the primary resource Agent Operator looks for. `GrafanaAgent` is called the root because it discovers other sub-resources, `MetricsInstance` and `LogsInstance`
 
     kubectl apply -f grafana-agent.yml
 
-Deploy a MetricsInstance resource
-
-Defines where to ship collected metrics. This rolls out a Grafana Agent StatefulSet that will scrape and ship metrics to a remote_write endpoint.
+Deploy a MetricsInstance resource, Defines where to ship collected metrics. This rolls out a Grafana Agent StatefulSet that will scrape and ship metrics to a remote_write endpoint.
 
     kubectl apply -f metric-instance.yml
 
-Create ServiceMonitors for kubelet and cAdvisor endpoints
-
-Collects cAdvisor and kubelet metrics. This configures the MetricsInstance / Agent StatefulSet
+Create ServiceMonitors for kubelet and cAdvisor endpoints, Collects cAdvisor and kubelet metrics. This configures the MetricsInstance / Agent StatefulSet
 
     kubectl apply -f kubelet-svc-monitor.yml
     kubectl apply -f cadvisor-svc-monitor.yml
 
-Deploy LogsInstance resource
-
-Defines where to ship collected logs. This rolls out a Grafana Agent DaemonSet that will tail log files on your cluster nodes.
+Deploy LogsInstance resource, Defines where to ship collected logs. This rolls out a Grafana Agent DaemonSet that will tail log files on your cluster nodes.
 
     kubectl apply -f log-instance.yml
 
-Deploy PodLogs resource
-
-Collects container logs from Kubernetes Pods. This configures the LogsInstance / Agent DaemonSet.
+Deploy PodLogs resource, Collects container logs from Kubernetes Pods. This configures the LogsInstance / Agent DaemonSet.
 
     kubectl apply -f pod-logs.yml
