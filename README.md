@@ -54,4 +54,47 @@ Use `port-forward` to connect to `my-app`, like this: `kubectl port-forward POD_
 
     http://localhost:8080/rolldice
 
-Refresh the page multiple times. if you want to see the traces, use `port-forward` to connect to `grafana` and Go to `Explore`. You'll see the traces of my-app 
+Refresh the page multiple times. if you want to see the traces, use `port-forward` to connect to `grafana` and Go to `Explore`. You'll see the traces of my-app
+
+
+## :two: Scenario-2: Metrics with Mimir and Logs with Loki
+
+We're going to use grafana/agent operator to collect metrics and logs from the kubernetes cluster and forward metrics to `Mimir` and pod logs to `loki`
+
+Install the charts of agent-operator, loki, mimir, grafana
+
+    helm install collector grafana/grafana-agent-operator
+    helm install -n loki loki grafana/loki -f loki-values.yml
+    helm install -n mimir mimir grafana/mimir-distributed
+    helm install -n grafana grafana grafana/grafana -f grafana-values-scenario-2.yml
+
+Deploy the GrafanaAgent resource
+
+The root of the custom resource hierarchy is the `GrafanaAgent` resource—the primary resource Agent Operator looks for. `GrafanaAgent` is called the root because it discovers other sub-resources, `MetricsInstance` and `LogsInstance`
+
+    kubectl apply -f grafana-agent.yml
+
+Deploy a MetricsInstance resource
+
+Defines where to ship collected metrics. This rolls out a Grafana Agent StatefulSet that will scrape and ship metrics to a remote_write endpoint.
+
+    kubectl apply -f metric-instance.yml
+
+Create ServiceMonitors for kubelet and cAdvisor endpoints
+
+Collects cAdvisor and kubelet metrics. This configures the MetricsInstance / Agent StatefulSet
+
+    kubectl apply -f kubelet-svc-monitor.yml
+    kubectl apply -f cadvisor-svc-monitor.yml
+
+Deploy LogsInstance resource
+
+Defines where to ship collected logs. This rolls out a Grafana Agent DaemonSet that will tail log files on your cluster nodes.
+
+    kubectl apply -f log-instance.yml
+
+Deploy PodLogs resource
+
+Collects container logs from Kubernetes Pods. This configures the LogsInstance / Agent DaemonSet.
+
+    kubectl apply -f pod-logs.yml
