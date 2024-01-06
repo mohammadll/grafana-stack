@@ -28,13 +28,13 @@ Set up a Helm repository using the following commands:
     helm repo add grafana https://grafana.github.io/helm-charts
     helm repo update
 
-Use the following command to install Tempo using the configuration options we’ve specified in the `tempo-values.yml` file:
+Use the following command to install Tempo using the configuration options we’ve specified in the `helm-values/tempo-values.yml` file:
 
-    helm -n tempo install tempo grafana/tempo-distributed -f tempo-values.yml
+    helm -n tempo install tempo grafana/tempo-distributed -f helm-values/tempo-values.yml
 
-Use the following command to install Grafana using the configuration options we’ve specified in the `grafana-values-scenario-1.yml` file:
+Use the following command to install Grafana using the configuration options we’ve specified in the `helm-values/grafana-values-scenario-1.yml` file:
 
-    helm -n grafana install grafana grafana/grafana -f grafana-values-scenario-1.yml
+    helm -n grafana install grafana grafana/grafana -f helm-values/grafana-values-scenario-1.yml
 
 To install the Opentelemetry Operator in an existing cluster, make sure you have cert-manager installed and run:
 
@@ -42,13 +42,13 @@ To install the Opentelemetry Operator in an existing cluster, make sure you have
 
 Create an OpenTelemetry `Collector` and an `Instrumentation` resource with the configuration for the SDK and instrumentation.
 
-    kubectl apply -f colllector.yml
-    kubectl apply -f instrument.yml
+    kubectl apply -f open-telemetry-operator/colllector.yml
+    kubectl apply -f open-telemetry-operator/instrument.yml
 
 Go to `trace-python-app` directory and build the docker image using this command: `docker build -t myapp .` and then:
 
-    kubectl apply -f deployment.yml
-    kubectl apply -f service.yml
+    kubectl apply -f trace-python-app-manifests/deployment.yml
+    kubectl apply -f trace-python-app-manifests/service.yml
 
 Use `port-forward` to connect to `my-app`, like this: `kubectl port-forward POD_NAME 8080` and then Go to your browser and type:
 
@@ -64,30 +64,30 @@ We're going to use grafana/agent operator to collect metrics and logs from the k
 Install the charts of agent-operator, loki, mimir, grafana
 
     helm install collector grafana/grafana-agent-operator
-    helm install -n loki loki grafana/loki -f loki-values.yml
+    helm install -n loki loki grafana/loki -f helm-values/loki-values.yml
     helm install -n mimir mimir grafana/mimir-distributed
-    helm install -n grafana grafana grafana/grafana -f grafana-values-scenario-2.yml
+    helm install -n grafana grafana grafana/grafana -f helm-values/grafana-values-scenario-2.yml
 
 Deploy the GrafanaAgent resource, The root of the custom resource hierarchy is the `GrafanaAgent` resource—the primary resource Agent Operator looks for. `GrafanaAgent` is called the root because it discovers other sub-resources, `MetricsInstance` and `LogsInstance`
 
-    kubectl apply -f grafana-agent.yml
+    kubectl apply -f agent-operator/grafana-agent.yml
 
 Deploy a MetricsInstance resource, Defines where to ship collected metrics. This rolls out a Grafana Agent StatefulSet that will scrape and ship metrics to a remote_write endpoint.
 
-    kubectl apply -f metric-instance.yml
+    kubectl apply -f agent-operator/metric-instance.yml
 
 Create ServiceMonitors for kubelet and cAdvisor endpoints, Collects cAdvisor and kubelet metrics. This configures the MetricsInstance / Agent StatefulSet
 
-    kubectl apply -f kubelet-svc-monitor.yml
-    kubectl apply -f cadvisor-svc-monitor.yml
+    kubectl apply -f agent-operator/kubelet-svc-monitor.yml
+    kubectl apply -f agent-operator/cadvisor-svc-monitor.yml
 
 Deploy LogsInstance resource, Defines where to ship collected logs. This rolls out a Grafana Agent DaemonSet that will tail log files on your cluster nodes.
 
-    kubectl apply -f log-instance.yml
+    kubectl apply -f agent-operator/log-instance.yml
 
 Deploy PodLogs resource, Collects container logs from Kubernetes Pods. This configures the LogsInstance / Agent DaemonSet.
 
-    kubectl apply -f pod-logs.yml
-This example (`pod-logs.yml`) tails container logs for all Pods in the `default, loki, mimir` namespaces. You can restrict the set of matched Pods by using the `matchLabels` selector.
+    kubectl apply -f agent-operator/pod-logs.yml
+This example (`agent-operator/pod-logs.yml`) tails container logs for all Pods in the `default, loki, mimir` namespaces. You can restrict the set of matched Pods by using the `matchLabels` selector.
 
-If you want to see the metrics and logs, use `port-forward` to connect to grafana and then Go to `Explore` and choose `mimir` as the datasource to see the metrics and choose `loki` to see the pods logs. you can see the pods logs of `default, loki, mimir` namespaces. if you want to add/remove any namespaces, Modify `matchLabels` selector in `pod-logs.yml`
+If you want to see the metrics and logs, use `port-forward` to connect to grafana and then Go to `Explore` and choose `mimir` as the datasource to see the metrics and choose `loki` to see the pods logs. you can see the pods logs of `default, loki, mimir` namespaces. if you want to add/remove any namespaces, Modify `matchLabels` selector in `agent-operator/pod-logs.yml`
