@@ -88,4 +88,6 @@ Deploy LogsInstance resource, Defines where to ship collected logs. This rolls o
 Deploy PodLogs resource, Collects container logs from Kubernetes Pods. This configures the LogsInstance / Agent DaemonSet.
 
     kubectl apply -f pod-logs.yml
-This example (pod-logs.yml) tails container logs for all Pods in the `default, loki, mimir` namespaces. You can restrict the set of matched Pods by using the `matchLabels` selector. 
+This example (`pod-logs.yml`) tails container logs for all Pods in the `default, loki, mimir` namespaces. You can restrict the set of matched Pods by using the `matchLabels` selector.
+
+If you want to see the metrics and logs, use `port-forward` to connect to grafana and then Go to `Explore` and choose `mimir` as the datasource to see the metrics and choose `loki` to see the pods logs. you can see the pods logs of `default, loki, mimir` namespaces. if you want to add/remove any namespaces, Modify `matchLabels` selector in `pod-logs.yml`
