@@ -1,10 +1,16 @@
-# grafana-stack
-If you are interested in setting up a Grafana stack and working with it on a kubernetes clsuter, please follow the instructions provided in this repository.
+## 💡 Description
+The Grafana LGTM stack is a comprehensive set of open-source tools designed for monitoring, observability, and visualization. It includes several key components, each serving a specific purpose to provide a complete solution for monitoring applications and infrastructure. If you are interested in setting up a Grafana LGTM stack and working with it on a kubernetes clsuter, please follow the instructions provided in this repository.
 
+## :wrench: What tools do we want to use in this repository
+  - **Loki**: a log aggregation system designed to store and query logs from all your applications and infrastructure. https://grafana.com/oss/loki/
+  - **Grafana**: allows you to query, visualize, alert on and understand your metrics no matter where they are stored. https://grafana.com/oss/grafana/
+  - **Tempo**: an open source, easy-to-use, and high-scale distributed tracing backend. https://grafana.com/oss/tempo/
+  - **Mimir**: an open source, horizontally scalable, highly available, multi-tenant TSDB for long-term storage for Prometheus. https://grafana.com/oss/mimir/
+  - **Agent**: is a batteries-included, open source telemetry collector for collecting metrics, logs, and traces. https://grafana.com/oss/agent/
 
-## Table of Contents
- - Grafana Agent [README](agent)
- - Grafana Faro [README](faro)
- - Grafana Mimir [README](mimir)
- - Grafana Pyroscope [README](pyroscope)
- - Grafana Tempo [README](tempo)
+## 🔎 What do we want to do
+  - **Traces with Tempo**:
+     - We want to write a simple Python app, collect its spans and traces using the `OpenTelemetry Kubernetes operator`, forward these traces to `Tempo`, and finally visualize the traces using `Grafana`.
+  - **Metrics with Mimir and Logs with Loki**:
+     - Using the `agent operator` to collect kubelet and cAdvisor metrics exposed by the kubelet service. Each node in your cluster exposes kubelet metrics at /metrics and cAdvisor metrics at /metrics/cadvisor. Finally, remotely writing these metrics to `Mimir` and visualizing them with `Grafana`
+     - Using the `agent operator` to collect logs from the cluster nodes, shipping them to a remote `Loki` endpoint and visualizing them with `Grafana`.
