@@ -1,0 +1,21 @@
+env:
+  GF_AUTH_ANONYMOUS_ENABLED: true
+  GF_AUTH_ANONYMOUS_ORG_ROLE: 'Admin'
+  GF_AUTH_DISABLE_LOGIN_FORM: true
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: Mimir
+      type: prometheus
+      access: proxy
+      url: http://mimir-nginx.mimir.svc.cluster.local:80/prometheus
+      basicAuth: false
+      isDefault: true
+      editable: false
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki-gateway.loki.svc.cluster.local
+      jsonData:
+        maxLines: 1000

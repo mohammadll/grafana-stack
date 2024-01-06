@@ -1,0 +1,17 @@
+apiVersion: monitoring.grafana.com/v1alpha1
+kind: PodLogs
+metadata:
+  labels:
+    instance: primary
+  name: kubernetes-pods
+  namespace: default
+spec:
+  pipelineStages:
+    - docker: {}
+  namespaceSelector:
+    matchNames:
+    - default
+    - loki
+    - mimir
+  selector:
+    matchLabels: {}
