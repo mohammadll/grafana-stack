@@ -14,3 +14,22 @@ The Grafana LGTM stack is a comprehensive set of open-source tools designed for 
   - **Metrics with Mimir and Logs with Loki**:
      - Using the `agent operator` to collect kubelet and cAdvisor metrics exposed by the kubelet service. Each node in your cluster exposes kubelet metrics at /metrics and cAdvisor metrics at /metrics/cadvisor. Finally, remotely writing these metrics to `Mimir` and visualizing them with `Grafana`
      - Using the `agent operator` to collect logs from the cluster nodes, shipping them to a remote `Loki` endpoint and visualizing them with `Grafana`.
+
+
+## Scenario-1: Traces with Tempo
+
+Create a unique Kubernetes namespace for tempo and grafana:
+
+    kubectl create namespace tempo
+    kubectl create namespace grafana
+
+Set up a Helm repository using the following commands:
+
+    helm repo add grafana https://grafana.github.io/helm-charts
+    helm repo update
+
+Use the following command to install Tempo using the configuration options we’ve specified in the `tempo-values.yml` file:
+
+    helm -n tempo install tempo grafana/tempo-distributed -f tempo-values.yml
+
+Use the following command to install Grafana using the configuration options we’ve specified in the `grafana-values.yml` file:
