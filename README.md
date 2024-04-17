@@ -63,12 +63,13 @@ Refresh the page multiple times. if you want to see the traces, use `port-forwar
 
 We're going to use grafana/agent operator to collect metrics and logs from the kubernetes cluster and forward metrics to `Mimir` and pod logs to `loki` . Let's deploy an Nginx deployment with its related service and collect its logs using Grafana Agent. As you know, the log format of Nginx includes HTTP Method and Status Code, etc. Therefore, we will use pipelines in our Grafana Agent configuration to extract the HTTP Method of Nginx access logs and add it as an additional label to Loki, showcasing the power of Grafana Agent . Ready ? let's GO!
 
-Install the charts of agent-operator, loki, mimir, grafana
+Install the charts of agent-operator, loki, mimir, grafana as well as the nginx manifests
 
     helm install collector grafana/grafana-agent-operator
     helm install -n loki loki grafana/loki -f helm-values/loki-values.yml
     helm install -n mimir mimir grafana/mimir-distributed
     helm install -n grafana grafana grafana/grafana -f helm-values/grafana-values-scenario-2.yml
+    kubectl apply -f nginx/
 
 Deploy the GrafanaAgent resource, The root of the custom resource hierarchy is the `GrafanaAgent` resource—the primary resource Agent Operator looks for. `GrafanaAgent` is called the root because it discovers other sub-resources, `MetricsInstance` and `LogsInstance`
 
