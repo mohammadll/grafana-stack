@@ -8,10 +8,21 @@ metadata:
 spec:
   pipelineStages:
     - docker: {}
+    - match:
+        selector: '{namespace="nginx"}'
+        stages: |
+          - regex:
+              expression: "(?P<method>GET|POST|PUT|DELETE)"
+          - regex:
+              expression: "(?P<http_version_with_status_code>HTTP.{5}.\\d{3})"
+          - regex:
+              expression: "(?P<status_code>\\d{3})"
+              source: "http_version_with_status_code"
+          - labels:
+              method:
+              status_code:
   namespaceSelector:
     matchNames:
-    - default
-    - loki
-    - mimir
+    - nginx
   selector:
     matchLabels: {}
