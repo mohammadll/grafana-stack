@@ -63,6 +63,8 @@ Refresh the page multiple times. if you want to see the traces, use `port-forwar
 
 We're going to use grafana/agent operator to collect metrics and logs from the kubernetes cluster and forward metrics to `Mimir` and pod logs to `loki` . Let's deploy an Nginx deployment with its related service and collect its logs using Grafana Agent. As you know, the log format of Nginx includes HTTP Method and Status Code, etc. Therefore, we will use pipelines in our Grafana Agent configuration to extract the HTTP Method and Status Code from Nginx access logs and add them as additional label to Loki, showcasing the power of Grafana Agent . Ready ? let's GO!
 
+First of all, you need to seutp minio as an external object storage to store loki index and chunks, check 
+
 Install the charts of agent-operator, loki, mimir, grafana as well as the nginx manifests
 
     helm install collector grafana/grafana-agent-operator
