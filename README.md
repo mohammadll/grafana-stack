@@ -61,7 +61,7 @@ Refresh the page multiple times. if you want to see the traces, use `port-forwar
 
 ## :two: Scenario-2: Metrics with Mimir and Logs with Loki
 
-We're going to use grafana/agent operator to collect metrics and logs from the kubernetes cluster and forward metrics to `Mimir` and pod logs to `loki` . Let's deploy an Nginx deployment with its related service and collect its logs using Grafana Agent. As you know, the log format of Nginx includes HTTP Method and Status Code, etc. Therefore, we will use pipelines in our Grafana Agent configuration to extract the HTTP Method of Nginx access logs and add it as an additional label to Loki, showcasing the power of Grafana Agent . Ready ? let's GO!
+We're going to use grafana/agent operator to collect metrics and logs from the kubernetes cluster and forward metrics to `Mimir` and pod logs to `loki` . Let's deploy an Nginx deployment with its related service and collect its logs using Grafana Agent. As you know, the log format of Nginx includes HTTP Method and Status Code, etc. Therefore, we will use pipelines in our Grafana Agent configuration to extract the HTTP Method and Status Code from Nginx access logs and add them as additional label to Loki, showcasing the power of Grafana Agent . Ready ? let's GO!
 
 Install the charts of agent-operator, loki, mimir, grafana as well as the nginx manifests
 
