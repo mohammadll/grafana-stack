@@ -1,12 +1,58 @@
+test:
+  enabled: false
 monitoring:
   selfMonitoring:
+    enabled: false
     grafanaAgent:
       installOperator: false
+read:
+  replicas: 1
+backend:
+  replicas: 1
+  persistence:
+    storageClass: standard
+  extraVolumes:
+    - name: retention
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: retention
+      mountPath: /data
+write:
+  replicas: 1
+  persistence:
+    storageClass: standard
 loki:
-  auth_enabled: false
+  limits_config:
+    max_query_lookback: 70m
+    retention_period: 70m
+  compactor:
+    working_directory: /data/retention
+    delete_request_store: s3
+    retention_enabled: true
   commonConfig:
     replication_factor: 1
+  schemaConfig:
+    configs:
+      - from: 2024-04-01
+        store: tsdb
+        object_store: s3
+        schema: v13
+        index:
+          prefix: index_
+          period: 24h
+        chunks:
+          period: 24h
   storage:
-    type: 'filesystem'
-singleBinary:
-  replicas: 1
+    bucketNames:
+      chunks: loki-chunks
+      ruler: loki-ruler
+      admin: loki-admin
+    type: s3
+    s3:
+      endpoint: http://localhost:9000
+      region: <REGION>
+      secretAccessKey: <SECRET-ACCESS-KEY>
+      accessKeyId: <ACCESS-KEY-ID>
+      s3ForcePathStyle: true
+      insecure: true
+  auth_enabled: false
