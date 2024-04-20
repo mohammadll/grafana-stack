@@ -23,8 +23,8 @@ write:
     storageClass: standard
 loki:
   limits_config:
-    max_query_lookback: 70m
-    retention_period: 70m
+    max_query_lookback: 4d
+    retention_period: 4d
   compactor:
     working_directory: /data/retention
     delete_request_store: s3
