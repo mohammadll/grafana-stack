@@ -98,3 +98,30 @@ This example (`agent-operator/pod-logs.yml`) tails container logs for all Pods i
 If you want to see the metrics and logs, use `port-forward` to connect to grafana and then Go to `Explore` and choose `mimir` as the datasource to see the metrics and choose `loki` to see the pods logs. you can see the pods logs of `nginx` namespace. if you want to add/remove any namespaces, Modify `matchLabels` selector in `agent-operator/pod-logs.yml`
 
 For instance, you can use LogQL to extract log lines that include the status code `4.*`: `{namespace="nginx", status_code=~"4.*"}`
+
+
+
+## :three: Scenario-3: Migrating from Grafana Agent to Grafana Alloy
+
+Enter Grafana Alloy, the spiritual successor to Grafana Agent. Alloy is the new open source distribution of the OpenTelemetry Collector that is 100% OTLP compatible and offers native pipelines for OpenTelemetry and Prometheus telemetry formats, supporting metrics, logs, traces, and profiles. It does everything you’d expect of the Grafana Agent project and other agents — plus so much more. If you are currently using Grafana Agent in your observability stack, we encourage you to migrate to Alloy. both Grafana Agent and Grafana Agent Operator will no longer receive any new feature updates.
+
+The Monitor types (`PodMonitor`, `ServiceMonitor`, `Probe`, and `PodLogs`) are all supported natively by Alloy. The parts of Grafana Agent Operator that deploy Grafana Agent, `GrafanaAgent`, `MetricsInstance`, and `LogsInstance` CRDs, are deprecated.
+
+First of all, Let's start with `Metrics` (forwarding metrics to mimir) and then We'll move on to `Logs` (forwarding logs to loki)
+
+## Convert `MetricsInstance` to Alloy components
+
+Uninstall `GrafanaAgent` and `MetricsInstance` resources inside `default` namespace and then deploy the below configmap as well as `cadvisor` and `kubelet` servicemonitors inside `alloy-metrics` namespace and finally install alloy-metrics using helm:
+
+    kubectl apply -f migrate-from-agent-to-alloy/metrics/alloy-configMap.yml
+    migrate-from-agent-to-alloy/metrics/cadvisor-serviceMonitor.yml
+    migrate-from-agent-to-alloy/metrics/kubelet-serviceMonitor.yml
+    helm install alloy-metrics grafana/alloy -n alloy-metrics -f migrate-from-agent-to-alloy/metrics/alloy-helmValues.yml
+
+## Collecting logs
+
+Uninstall `GrafanaAgent`, `LogsInstance` and `PodLogs` resources inside `default` namespace and then deploy the below configmap as well inside `alloy-logs` namespace and finally install alloy-logs using helm:
+
+    kubectl apply -f migrate-from-agent-to-alloy/logs/alloy-configMap.yml
+    kubectl apply -f migrate-from-agent-to-alloy/logs/alloy-helmValues.yml
+If you pay attention to `loki.process` inside `migrate-from-agent-to-alloy/logs/alloy-configMap.yml`, you find out that i use an additional `stage` which adds `status_code` and `method` labels to the pods inside `nginx` namespace. if you take a look at `Explore` section of grafana, All logs within `nginx` namespace, have those added labels.
