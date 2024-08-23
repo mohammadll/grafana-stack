@@ -12,15 +12,15 @@ datasources:
       jsonData:
           alertmanagerUid: "alertmanager"
     - name: Mimir Alertmanager
-        uid: alertmanager
-        type: alertmanager
-        access: proxy
-        orgId: 1
-        url: http://mimir-nginx.mimir.svc.cluster.local/
-        version: 1
-        editable: true
-        jsonData:
-          implementation: "cortex"
+      uid: alertmanager
+      type: alertmanager
+      access: proxy
+      orgId: 1
+      url: http://mimir-nginx.mimir.svc.cluster.local/
+      version: 1
+      editable: true
+      jsonData:
+        implementation: "cortex"
     - name: Loki
       type: loki
       access: proxy
