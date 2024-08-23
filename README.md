@@ -59,17 +59,17 @@ Use `port-forward` to connect to `my-app`, like this: `kubectl port-forward POD_
 Refresh the page multiple times. if you want to see the traces, use `port-forward` to connect to `grafana` and Go to `Explore`. You'll see the traces of my-app
 
 
-## :two: Scenario-2: Metrics with Mimir and Logs with Loki
+## :two: Scenario-2: Metrics with Mimir and Logs with Loki, Collecting Metrics and Logs using Grafana Agent
 
 We're going to use grafana/agent operator to collect metrics and logs from the kubernetes cluster and forward metrics to `Mimir` and pod logs to `loki` . Let's deploy an Nginx deployment with its related service and collect its logs using Grafana Agent. As you know, the log format of Nginx includes HTTP Method and Status Code, etc. Therefore, we will use pipelines in our Grafana Agent configuration to extract the HTTP Method and Status Code from Nginx access logs and add them as additional label to Loki, showcasing the power of Grafana Agent . Ready ? let's GO!
 
-First of all, you need to seutp MiniO as an external object storage to store loki index and chunks, check the `helm-values/loki-values.yml` for the `loki.storage` section to find out how we can integrate MiniO with Loki.  
+First of all, you need to seutp MiniO as an external object storage to store loki index and chunks, check the `helm-values/loki-values.yml` for the `loki.storage` section to find out how we can integrate MiniO with Loki. We also need to stote `mimir tsdb blocks` inside minio. I highly recommend you to check both `helm-values/loki-values.yml` and `helm-values/mimir-values.yml` because you need to replace some existing data with your own appropriate data.
 
 Install the charts of agent-operator, loki, mimir, grafana as well as the nginx manifests
 
     helm install collector grafana/grafana-agent-operator
     helm install -n loki loki grafana/loki -f helm-values/loki-values.yml
-    helm install -n mimir mimir grafana/mimir-distributed
+    helm install -n mimir mimir grafana/mimir-distributed -f helm-values/mimir-values.yml
     helm install -n grafana grafana grafana/grafana -f helm-values/grafana-values-scenario-2.yml
     kubectl apply -f nginx/
 
