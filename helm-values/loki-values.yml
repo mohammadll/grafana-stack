@@ -1,39 +1,19 @@
-test:
-  enabled: false
-monitoring:
-  selfMonitoring:
-    enabled: false
-    grafanaAgent:
-      installOperator: false
 read:
-  replicas: 1
-backend:
   replicas: 1
   persistence:
     storageClass: standard
-  extraVolumes:
-    - name: retention
-      emptyDir: {}
-  extraVolumeMounts:
-    - name: retention
-      mountPath: /data
 write:
   replicas: 1
   persistence:
     storageClass: standard
+backend:
+  replicas: 1
+  persistence:
+    storageClass: standard
 loki:
-  limits_config:
-    max_query_lookback: 4d
-    retention_period: 4d
-  compactor:
-    working_directory: /data/retention
-    delete_request_store: s3
-    retention_enabled: true
-  commonConfig:
-    replication_factor: 1
   schemaConfig:
     configs:
-      - from: 2024-04-01
+      - from: 2024-08-01
         store: tsdb
         object_store: s3
         schema: v13
@@ -42,17 +22,18 @@ loki:
           period: 24h
         chunks:
           period: 24h
+  auth_enabled: false
+  commonConfig:
+    replication_factor: 1
   storage:
-    bucketNames:
+    bucketNames: # First of all, create these two buckets inside minio
       chunks: loki-chunks
       ruler: loki-ruler
-      admin: loki-admin
     type: s3
     s3:
-      endpoint: http://localhost:9000
-      region: <REGION>
-      secretAccessKey: <SECRET-ACCESS-KEY>
-      accessKeyId: <ACCESS-KEY-ID>
-      s3ForcePathStyle: true
+      endpoint: http://minio-local:9000 # This is just an example, change the url with your own minio instance
+      secretAccessKey: <<CHANGEME>>
+      accessKeyId: <<CHANGEME>>
       insecure: true
-  auth_enabled: false
+      s3ForcePathStyle: true
+      region: <<CHANGEME>>

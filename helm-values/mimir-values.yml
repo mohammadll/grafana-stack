@@ -1,0 +1,55 @@
+query_scheduler:
+  replicas: 1
+querier:
+  replicas: 1
+alertmanager:
+  fallbackConfig: | # FallbackConfig helps you to define a default alertmanager configuration for all tenants
+    route:
+      receiver: 'slack-notifications' # Change it with your own receiver
+    receivers:
+    - name: 'slack-notifications' # Change it with your own receiver
+      slack_configs:
+      - send_resolved: true
+        channel: "#alerting" # Change it with a real channel, if you're using slack or mattermost
+        api_url: "http://mattermost-local:8065/hooks/3g9jfz5tr784zmheu44b6be39o" # Change it with a real api_url, if you're using slack or mattermost
+        title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+        text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
+  persistentVolume:
+    storageClass: standard
+ingester:
+  zoneAwareReplication:
+    enabled: false
+  persistentVolume:
+    storageClass: standard
+store_gateway:
+  zoneAwareReplication:
+    enabled: false
+  persistentVolume:
+    storageClass: standard
+compactor:
+  persistentVolume:
+    storageClass: standard
+minio:
+  enabled: false
+mimir:
+  structuredConfig:
+    common:
+      storage:
+        backend: s3
+        s3:
+          access_key_id: CHANGEME
+          bucket_name: mimir-ruler # First of all, You need to create this bucket in minio
+          endpoint: minio-local:9000 # Change it with your own minio instance
+          insecure: true
+          secret_access_key: CHANGEME
+    blocks_storage:
+      s3:
+        bucket_name: mimir-tsdb # First of all, You need to create this bucket in minio
+
+    alertmanager_storage:
+      s3:
+        bucket_name: mimir-ruler # First of all, You need to create this bucket in minio
+
+    ruler_storage:
+      s3:
+        bucket_name: mimir-ruler # First of all, You need to create this bucket in minio
