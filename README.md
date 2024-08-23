@@ -113,6 +113,7 @@ First of all, Let's start with `Metrics` (forwarding metrics to mimir) and then 
 
 Uninstall `GrafanaAgent` and `MetricsInstance` resources inside `default` namespace and then deploy the below configmap as well as `cadvisor` and `kubelet` servicemonitors inside `alloy-metrics` namespace and finally install alloy-metrics using helm:
 
+    kubectl create ns alloy-metrics
     kubectl apply -f migrate-from-agent-to-alloy/metrics/alloy-configMap.yml
     migrate-from-agent-to-alloy/metrics/cadvisor-serviceMonitor.yml
     migrate-from-agent-to-alloy/metrics/kubelet-serviceMonitor.yml
@@ -122,6 +123,7 @@ Uninstall `GrafanaAgent` and `MetricsInstance` resources inside `default` namesp
 
 Uninstall `GrafanaAgent`, `LogsInstance` and `PodLogs` resources inside `default` namespace and then deploy the below configmap as well inside `alloy-logs` namespace and finally install alloy-logs using helm:
 
+    kubectl create ns alloy-logs
     kubectl apply -f migrate-from-agent-to-alloy/logs/alloy-configMap.yml
-    kubectl apply -f migrate-from-agent-to-alloy/logs/alloy-helmValues.yml
+    helm install alloy-logs grafana/alloy -n alloy-logs -f migrate-from-agent-to-alloy/logs/alloy-helmValues.yml
 If you pay attention to `loki.process` inside `migrate-from-agent-to-alloy/logs/alloy-configMap.yml`, you find out that i use an additional `stage` which adds `status_code` and `method` labels to the pods inside `nginx` namespace. if you take a look at `Explore` section of grafana, All logs within `nginx` namespace, have those added labels.
