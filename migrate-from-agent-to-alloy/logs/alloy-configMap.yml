@@ -50,7 +50,7 @@ data:
      }
 
      loki.process "pod_logs" {
-       stage.match { # This stage is just an example to show you how loki.process works!
+       stage.match {
          selector = "{namespace=\"nginx\"}"
          stage.regex {
            expression = "(?P<method>GET|PUT|DELETE|POST)"
